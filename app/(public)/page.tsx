@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "primereact/button";
 
 export default function HomePage() {
@@ -56,12 +57,15 @@ export default function HomePage() {
 
           {/* Hero Image / Graphic */}
           <div className="relative mx-auto w-full max-w-md lg:max-w-full aspect-square lg:aspect-auto lg:h-[600px] bg-slate-200 rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-900/5">
-            {/* Placeholder until real image */}
-            <div className="absolute inset-0 flex items-center justify-center bg-linear-to-br from-indigo-500 to-sky-400">
-              <span className="text-white/80 font-medium tracking-widest uppercase">
-                Foto Profissional Aqui
-              </span>
-            </div>
+            {/* Foto Profissional */}
+            <Image
+              src="/images/foto-perfil.jpg"
+              alt="Foto Profissional"
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
 
             {/* Floating Badge */}
             <div
