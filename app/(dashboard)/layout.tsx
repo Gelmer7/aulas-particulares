@@ -21,6 +21,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <Link href="/disponibilidade" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
             <i className="pi pi-clock"></i> Meus Horários
           </Link>
+          <Link href="/conteudo" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 hover:text-white transition-colors border-t border-slate-800 pt-5 mt-5">
+            <i className="pi pi-pencil"></i> Conteúdo do Site
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-slate-800">

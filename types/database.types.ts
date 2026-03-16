@@ -8,6 +8,14 @@ export interface Profile {
   created_at: string;
 }
 
+export interface SiteContent {
+  key: string;
+  value: Record<string, unknown>; // JSONB
+  type: 'seo' | 'hero' | 'about' | 'services' | 'testimonials' | 'faq' | 'contact' | 'social';
+  updated_at: string;
+  updated_by: string | null;
+}
+
 export interface AvailabilityRule {
   id: string;
   day_of_week: number; // 0 (Domingo) - 6 (Sábado)
@@ -49,4 +57,23 @@ export interface Appointment {
   internal_notes: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface TestimonialItem {
+  id: string;
+  name: string;
+  avatar: string | null;
+  text: string;
+  rating: number;
+  visible: boolean;
+}
+
+export interface ServiceItem {
+  id: string;
+  title: string;
+  description: string;
+  price: number | null;
+  duration: string;
+  image: string | null;
+  visible: boolean;
 }
