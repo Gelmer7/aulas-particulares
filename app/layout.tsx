@@ -14,6 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('http://localhost:3000'),
   title: "Professora de Exatas | Aulas Particulares de Química e Física",
   description: "Mentoria de alta performance em Química e Física para Ensino Médio e Vestibulares. Agende sua aula particular online ou presencial.",
 };
