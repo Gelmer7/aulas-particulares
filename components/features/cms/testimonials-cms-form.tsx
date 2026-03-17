@@ -122,40 +122,52 @@ export function TestimonialsCmsForm({ initialData }: { initialData: Record<strin
 
           <div className="flex flex-col gap-4">
               {testimonials.map((item, idx) => (
-                  <div key={item.id} className={`flex items-center gap-4 p-4 rounded-xl border ${item.visible ? 'border-slate-200 bg-white' : 'border-slate-200 bg-slate-50 opacity-60'}`}>
-                      <div className="flex flex-col gap-2">
-                          <Button icon="pi pi-angle-up" text rounded className="h-8 w-8 text-slate-500" disabled={idx === 0} onClick={() => moveItem(idx, 'up')} />
-                          <Button icon="pi pi-angle-down" text rounded className="h-8 w-8 text-slate-500" disabled={idx === testimonials.length - 1} onClick={() => moveItem(idx, 'down')} />
+                  <div key={item.id} className={`flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-xl border ${item.visible ? 'border-slate-200 bg-white' : 'border-slate-200 bg-slate-50 opacity-60'}`}>
+                      <div className="flex sm:flex-col gap-2 w-full sm:w-auto justify-between sm:justify-start border-b sm:border-0 pb-2 sm:pb-0">
+                          <div className="flex gap-2">
+                            <Button icon="pi pi-angle-up" text rounded className="h-8 w-8 text-slate-500" disabled={idx === 0} onClick={() => moveItem(idx, 'up')} />
+                            <Button icon="pi pi-angle-down" text rounded className="h-8 w-8 text-slate-500" disabled={idx === testimonials.length - 1} onClick={() => moveItem(idx, 'down')} />
+                          </div>
+                          <div className="sm:hidden flex items-center gap-2">
+                             <InputSwitch checked={item.visible} onChange={() => toggleVisibility(item.id)} />
+                             <Button icon="pi pi-trash" rounded text severity="danger" onClick={() => deleteItem(item.id)} />
+                          </div>
                       </div>
                       
-                      {item.avatar ? (
-                          <div className="w-14 h-14 rounded-full overflow-hidden shrink-0 bg-slate-100">
-                              <img src={item.avatar} alt={item.name} className="w-full h-full object-cover" />
-                          </div>
-                      ) : (
-                          <div className="w-14 h-14 rounded-full shrink-0 bg-indigo-100 flex items-center justify-center text-indigo-500 font-bold text-xl">
-                              {item.name.charAt(0)}
-                          </div>
-                      )}
+                      <div className="flex items-center gap-4 w-full">
+                        {item.avatar ? (
+                            <div className="w-14 h-14 rounded-full overflow-hidden shrink-0 bg-slate-100">
+                                <img src={item.avatar} alt={item.name} className="w-full h-full object-cover" />
+                            </div>
+                        ) : (
+                            <div className="w-14 h-14 rounded-full shrink-0 bg-indigo-100 flex items-center justify-center text-indigo-500 font-bold text-xl text-center">
+                                {item.name.charAt(0)}
+                            </div>
+                        )}
 
-                      <div className="flex-1 flex flex-col gap-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                              <span className="font-bold text-slate-800">{item.name}</span>
-                              <Rating value={item.rating} readOnly cancel={false} className="gap-1 text-sm text-yellow-500" />
-                          </div>
-                          <div className="text-sm text-slate-500 italic truncate">&quot;{item.text}&quot;</div>
-                      </div>
+                        <div className="flex-1 flex flex-col gap-1 min-w-0">
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                                <span className="font-bold text-slate-800">{item.name}</span>
+                                <Rating value={item.rating} readOnly cancel={false} className="gap-1 text-xs text-yellow-500" />
+                            </div>
+                            <div className="text-sm text-slate-500 italic line-clamp-2 sm:truncate">&quot;{item.text}&quot;</div>
+                        </div>
 
-                      <div className="flex items-center gap-2">
-                          <InputSwitch checked={item.visible} onChange={() => toggleVisibility(item.id)} tooltip="Mostrar/Esconder no Site" />
-                          <Button icon="pi pi-pencil" rounded text severity="info" onClick={() => openEdit(item)} tooltip="Editar" />
-                          <Button icon="pi pi-trash" rounded text severity="danger" onClick={() => deleteItem(item.id)} tooltip="Excluir" />
+                        <div className="hidden sm:flex items-center gap-2">
+                            <InputSwitch checked={item.visible} onChange={() => toggleVisibility(item.id)} tooltip="Mostrar/Esconder no Site" />
+                            <Button icon="pi pi-pencil" rounded text severity="info" onClick={() => openEdit(item)} tooltip="Editar" />
+                            <Button icon="pi pi-trash" rounded text severity="danger" onClick={() => deleteItem(item.id)} tooltip="Excluir" />
+                        </div>
+
+                        <div className="sm:hidden">
+                           <Button icon="pi pi-pencil" rounded text severity="info" onClick={() => openEdit(item)} />
+                        </div>
                       </div>
                   </div>
               ))}
           </div>
 
-          <Dialog header={editingItem?.id ? "Editar Depoimento" : "Novo Depoimento"} visible={displayEditDialog} style={{ width: '90vw', maxWidth: '500px' }} modal onHide={hideDialog} footer={(
+          <Dialog header={editingItem?.id ? "Editar Depoimento" : "Novo Depoimento"} visible={displayEditDialog} style={{ width: '95vw', maxWidth: '500px' }} modal onHide={hideDialog} footer={(
               <div>
                   <Button label="Cancelar" icon="pi pi-times" onClick={hideDialog} className="p-button-text" />
                   <Button label="Salvar" icon="pi pi-check" onClick={onSaveItem} autoFocus className="bg-indigo-600 hover:bg-indigo-700 border-none" loading={isPending} />

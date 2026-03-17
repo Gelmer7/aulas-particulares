@@ -150,7 +150,7 @@ export function BookingCalendar() {
                   {loadingSlots ? (
                      <div className="text-center p-4 text-slate-500 animate-pulse text-sm">Buscando horários disponíveis...</div>
                   ) : availableSlots.length > 0 ? (
-                     <div className="grid grid-cols-3 gap-2 mt-2 max-h-40 overflow-y-auto pr-2 pb-2">
+                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2 max-h-60 overflow-y-auto pr-2 pb-2">
                         {availableSlots.map(iso => {
                            const timeStr = formatInTimeZone(iso, userTimezone, "HH:mm");
                            return (
@@ -160,7 +160,7 @@ export function BookingCalendar() {
                                 label={timeStr} 
                                 onClick={() => handleSlotSelect(iso)}
                                 disabled={lockingSlot}
-                                className="p-2 border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 hover:border-indigo-400 transition-colors text-sm rounded-lg" 
+                                className="p-3 border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 hover:border-indigo-400 transition-colors text-base font-medium rounded-xl" 
                              />
                            )
                         })}

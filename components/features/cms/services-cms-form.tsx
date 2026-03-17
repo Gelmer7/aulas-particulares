@@ -125,37 +125,49 @@ export function ServicesCmsForm({ initialData }: { initialData: Record<string, a
 
           <div className="flex flex-col gap-4">
               {services.map((service, idx) => (
-                  <div key={service.id} className={`flex items-center gap-4 p-4 rounded-xl border ${service.visible ? 'border-slate-200 bg-white' : 'border-slate-200 bg-slate-50 opacity-60'}`}>
-                      <div className="flex flex-col gap-2">
-                          <Button icon="pi pi-angle-up" text rounded className="h-8 w-8 text-slate-500" disabled={idx === 0} onClick={() => moveItem(idx, 'up')} />
-                          <Button icon="pi pi-angle-down" text rounded className="h-8 w-8 text-slate-500" disabled={idx === services.length - 1} onClick={() => moveItem(idx, 'down')} />
+                  <div key={service.id} className={`flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-xl border ${service.visible ? 'border-slate-200 bg-white' : 'border-slate-200 bg-slate-50 opacity-60'}`}>
+                      <div className="flex sm:flex-col gap-2 w-full sm:w-auto justify-between sm:justify-start border-b sm:border-0 pb-2 sm:pb-0">
+                          <div className="flex gap-2">
+                            <Button icon="pi pi-angle-up" text rounded className="h-8 w-8 text-slate-500" disabled={idx === 0} onClick={() => moveItem(idx, 'up')} />
+                            <Button icon="pi pi-angle-down" text rounded className="h-8 w-8 text-slate-500" disabled={idx === services.length - 1} onClick={() => moveItem(idx, 'down')} />
+                          </div>
+                          <div className="sm:hidden flex items-center gap-2">
+                             <InputSwitch checked={service.visible} onChange={() => toggleVisibility(service.id)} />
+                             <Button icon="pi pi-trash" rounded text severity="danger" onClick={() => deleteItem(service.id)} />
+                          </div>
                       </div>
                       
-                      {service.image ? (
-                          <div className="w-16 h-16 rounded overflow-hidden shrink-0 bg-slate-100">
-                              <img src={service.image} alt={service.title} className="w-full h-full object-cover" />
-                          </div>
-                      ) : (
-                          <div className="w-16 h-16 rounded shrink-0 bg-slate-100 flex items-center justify-center text-slate-400">
-                              <i className="pi pi-image text-xl"></i>
-                          </div>
-                      )}
+                      <div className="flex items-center gap-4 w-full">
+                        {service.image ? (
+                            <div className="w-16 h-16 rounded overflow-hidden shrink-0 bg-slate-100">
+                                <img src={service.image} alt={service.title} className="w-full h-full object-cover" />
+                            </div>
+                        ) : (
+                            <div className="w-16 h-16 rounded shrink-0 bg-slate-100 flex items-center justify-center text-slate-400">
+                                <i className="pi pi-image text-xl"></i>
+                            </div>
+                        )}
 
-                      <div className="flex-1 flex flex-col gap-1 min-w-0">
-                          <div className="font-bold text-slate-800 truncate">{service.title}</div>
-                          <div className="text-sm text-slate-500 truncate">{service.description}</div>
-                      </div>
+                        <div className="flex-1 flex flex-col gap-1 min-w-0">
+                            <div className="font-bold text-slate-800 truncate">{service.title}</div>
+                            <div className="text-sm text-slate-500 line-clamp-2 sm:truncate">{service.description}</div>
+                        </div>
 
-                      <div className="flex items-center gap-2">
-                          <InputSwitch checked={service.visible} onChange={() => toggleVisibility(service.id)} tooltip="Mostrar/Esconder no Site" />
-                          <Button icon="pi pi-pencil" rounded text severity="info" onClick={() => openEdit(service)} tooltip="Editar" />
-                          <Button icon="pi pi-trash" rounded text severity="danger" onClick={() => deleteItem(service.id)} tooltip="Excluir" />
+                        <div className="hidden sm:flex items-center gap-2">
+                            <InputSwitch checked={service.visible} onChange={() => toggleVisibility(service.id)} tooltip="Mostrar/Esconder no Site" />
+                            <Button icon="pi pi-pencil" rounded text severity="info" onClick={() => openEdit(service)} tooltip="Editar" />
+                            <Button icon="pi pi-trash" rounded text severity="danger" onClick={() => deleteItem(service.id)} tooltip="Excluir" />
+                        </div>
+                        
+                        <div className="sm:hidden">
+                           <Button icon="pi pi-pencil" rounded text severity="info" onClick={() => openEdit(service)} />
+                        </div>
                       </div>
                   </div>
               ))}
           </div>
 
-          <Dialog header={editingService?.title ? "Editar Serviço" : "Novo Serviço"} visible={displayEditDialog} style={{ width: '90vw', maxWidth: '600px' }} modal onHide={hideDialog} footer={(
+          <Dialog header={editingService?.title ? "Editar Serviço" : "Novo Serviço"} visible={displayEditDialog} style={{ width: '95vw', maxWidth: '600px' }} modal onHide={hideDialog} footer={(
               <div>
                   <Button label="Cancelar" icon="pi pi-times" onClick={hideDialog} className="p-button-text" />
                   <Button label="Salvar" icon="pi pi-check" onClick={onSaveItem} autoFocus className="bg-indigo-600 hover:bg-indigo-700 border-none" loading={isPending} />
