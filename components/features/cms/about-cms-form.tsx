@@ -24,6 +24,9 @@ export function AboutCmsForm({ initialData }: { initialData: any }) {
          const res = await saveSiteContent('about_page', formData, 'about');
          if (res.success) {
             toast.current?.show({ severity: 'success', summary: 'Sucesso', detail: res.message });
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new CustomEvent('cms:contentSaved', { detail: { key: 'about_page' } }));
+            }
          } else {
             toast.current?.show({ severity: 'error', summary: 'Erro', detail: res.message });
          }

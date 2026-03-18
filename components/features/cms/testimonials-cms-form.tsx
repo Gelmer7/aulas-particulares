@@ -29,6 +29,9 @@ export function TestimonialsCmsForm({ initialData }: { initialData: Record<strin
          const res = await saveSiteContent('testimonials_page', { testimonialsList: currentList }, 'json');
          if (res.success) {
             toast.current?.show({ severity: 'success', summary: 'Sucesso', detail: res.message });
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new CustomEvent('cms:contentSaved', { detail: { key: 'testimonials_page' } }));
+            }
          } else {
             toast.current?.show({ severity: 'error', summary: 'Erro', detail: res.message });
          }

@@ -31,6 +31,9 @@ export function ServicesCmsForm({ initialData }: { initialData: Record<string, a
          const res = await saveSiteContent('services_page', { servicesList: currentList }, 'services');
          if (res.success) {
             toast.current?.show({ severity: 'success', summary: 'Sucesso', detail: res.message });
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new CustomEvent('cms:contentSaved', { detail: { key: 'services_page' } }));
+            }
          } else {
             toast.current?.show({ severity: 'error', summary: 'Erro', detail: res.message });
          }
