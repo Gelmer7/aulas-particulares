@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useRef } from 'react';
+import { useCallback, useEffect, useState, useTransition, useRef } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Message } from 'primereact/message';
@@ -9,17 +9,17 @@ import { RichEditor } from '@/components/ui/rich-editor';
 import { ImageUploader } from '@/components/ui/image-uploader';
 import { saveSiteContent } from '@/actions/cms.actions';
 
-export function AboutCmsForm({ initialData }: { initialData: any }) {
+export function AboutCmsForm({ initialData, onRegisterSave, hideFooterSave }: { initialData: Record<string, unknown> | null, onRegisterSave?: (fn: () => void) => void, hideFooterSave?: boolean }) {
   const toast = useRef<Toast>(null);
   const [isPending, startTransition] = useTransition();
 
-  const [formData, setFormData] = useState({
-     aboutTitle: initialData?.aboutTitle || "Sobre a Professora",
-     aboutBio: initialData?.aboutBio || "<p>Escreva sua biografia aqui...</p>",
-     profileImage: initialData?.profileImage || null,
+  const [formData, setFormData] = useState<{ aboutTitle: string; aboutBio: string; profileImage: string | null }>({
+     aboutTitle: (initialData?.aboutTitle as string) || "Sobre a Professora",
+     aboutBio: (initialData?.aboutBio as string) || "<p>Escreva sua biografia aqui...</p>",
+     profileImage: (initialData?.profileImage as string) || null,
   });
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
       startTransition(async () => {
          const res = await saveSiteContent('about_page', formData, 'about');
          if (res.success) {
@@ -31,7 +31,11 @@ export function AboutCmsForm({ initialData }: { initialData: any }) {
             toast.current?.show({ severity: 'error', summary: 'Erro', detail: res.message });
          }
       });
-  };
+  }, [formData]);
+
+  useEffect(() => {
+    onRegisterSave?.(handleSave);
+  }, [onRegisterSave, handleSave]);
 
   const handleImageUpload = (url: string) => {
       setFormData(prev => ({ ...prev, profileImage: url }));
@@ -46,7 +50,7 @@ export function AboutCmsForm({ initialData }: { initialData: any }) {
                   <div className="flex flex-col gap-2 w-full md:w-1/3">
                       <label className="font-semibold text-slate-700 text-sm">Foto de Perfil</label>
                       <ImageUploader 
-                         currentImageUrl={formData.profileImage} 
+                         currentImageUrl={formData.profileImage ?? undefined}
                          folderId="about" 
                          onUploadSuccess={handleImageUpload} 
                       />
@@ -77,15 +81,17 @@ export function AboutCmsForm({ initialData }: { initialData: any }) {
               </div>
           </div>
 
-          <div className="pt-6 border-t border-slate-100 flex justify-end">
-              <Button 
-                 label={isPending ? "Salvando..." : "Salvar e Publicar (Sobre)"} 
-                 icon="pi pi-check" 
-                 loading={isPending}
-                 onClick={handleSave} 
-                 className="bg-indigo-600 hover:bg-indigo-700 border-none px-6 py-3 font-bold" 
-              />
-          </div>
+          {!hideFooterSave && (
+            <div className="pt-6 border-t border-slate-100 flex justify-end">
+                <Button 
+                   label={isPending ? "Salvando..." : "Salvar e Publicar (Sobre)"} 
+                   icon="pi pi-check" 
+                   loading={isPending}
+                   onClick={handleSave} 
+                   className="bg-indigo-600 hover:bg-indigo-700 border-none px-6 py-3 font-bold" 
+                />
+            </div>
+          )}
       </div>
   );
 }

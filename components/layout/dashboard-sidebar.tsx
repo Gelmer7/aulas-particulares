@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Sidebar } from "primereact/sidebar";
 import { Button } from "primereact/button";
@@ -70,22 +70,9 @@ export function DashboardSidebar() {
   const [visible, setVisible] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
 
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("dashboardSidebarCollapsed");
-      if (saved === "true") setCollapsed(true);
-    } catch {}
-  }, []);
-
   const toggleCollapsed = () => {
     const next = !collapsed;
     setCollapsed(next);
-    try {
-      localStorage.setItem(
-        "dashboardSidebarCollapsed",
-        next ? "true" : "false",
-      );
-    } catch {}
   };
 
   return (

@@ -1,29 +1,33 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CmsTabs } from "@/components/features/cms/cms-tabs";
+import { CmsTabs, CmsTabsHandle } from "@/components/features/cms/cms-tabs";
 import { Button } from "primereact/button";
 
 export function SiteContentEditor({
   initialHome,
   initialAbout,
   initialServices,
-  initialTestimonials
+  initialTestimonials,
 }: {
-  initialHome: Record<string, any> | null;
-  initialAbout: Record<string, any> | null;
-  initialServices: Record<string, any> | null;
-  initialTestimonials: Record<string, any> | null;
+  initialHome: Record<string, unknown> | null;
+  initialAbout: Record<string, unknown> | null;
+  initialServices: Record<string, unknown> | null;
+  initialTestimonials: Record<string, unknown> | null;
 }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [iframeKey, setIframeKey] = useState(() => Date.now());
+  const [iframeKey, setIframeKey] = useState(0);
   const [collapsed, setCollapsed] = useState(false);
-  const [device, setDevice] = useState<"mobile" | "tablet" | "desktop" | "full">("desktop");
+  const cmsRef = useRef<CmsTabsHandle>(null);
+  const [saveLabel, setSaveLabel] = useState("Salvar");
+  const [canSave, setCanSave] = useState(false);
+  const [device, setDevice] = useState<
+    "mobile" | "tablet" | "desktop" | "full"
+  >("desktop");
 
   useEffect(() => {
-    const onSaved = (_e: Event) => {
-      setIframeKey(Date.now());
-    };
+    setIframeKey(Date.now());
+    const onSaved = () => setIframeKey(Date.now());
     window.addEventListener("cms:contentSaved", onSaved);
     return () => window.removeEventListener("cms:contentSaved", onSaved);
   }, []);
@@ -43,12 +47,21 @@ export function SiteContentEditor({
   })();
 
   return (
-    <div className="h-[100vh] w-full overflow-hidden flex">
-      <div className={`${collapsed ? "w-0" : "w-[40%]"} h-full overflow-hidden border-r border-slate-200`}>
+    <div className="h-screen w-full overflow-hidden flex">
+      <div className={`${collapsed ? "w-0" : "w-[40%]"} h-full overflow-hidde`}>
         <div className="h-full w-full flex flex-col">
-          <div className="flex items-center justify-between px-2 py-1 border-b border-slate-200">
+          <div className="flex items-center justify-between px-2 py-1 ">
             <div className="text-sm font-semibold">Editor</div>
             <div className="flex items-center gap-2">
+              {canSave && (
+                <Button
+                  type="button"
+                  label={saveLabel}
+                  icon="pi pi-check"
+                  className="p-button-sm bg-indigo-600 border-none"
+                  onClick={() => cmsRef.current?.saveActive()}
+                />
+              )}
               <Button
                 type="button"
                 icon={collapsed ? "pi pi-angle-right" : "pi pi-angle-left"}
@@ -59,17 +72,24 @@ export function SiteContentEditor({
               />
             </div>
           </div>
-          <div className="flex-1 overflow-auto p-2">
+          <div className="flex-1 overflow-auto">
             <CmsTabs
+              ref={cmsRef}
               initialHome={initialHome || {}}
               initialAbout={initialAbout || {}}
               initialServices={initialServices || {}}
               initialTestimonials={initialTestimonials || {}}
+              onMetaChange={({ canSave, label }) => {
+                setCanSave(canSave);
+                setSaveLabel(label);
+              }}
             />
           </div>
         </div>
       </div>
-      <div className={`${collapsed ? "w-full" : "w-[60%]"} h-full overflow-hidden`}>
+      <div
+        className={`${collapsed ? "w-full" : "w-[60%]"} h-full overflow-hidden`}
+      >
         <div className="h-full w-full flex flex-col">
           <div className="flex items-center justify-between px-2 py-1 border-b border-slate-200">
             <div className="text-sm font-semibold">Pré-visualização</div>

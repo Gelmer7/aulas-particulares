@@ -4,12 +4,8 @@ import { Button } from "primereact/button";
 import { getSiteContent } from "@/actions/cms.actions";
 import { Rating } from "primereact/rating";
 import { TestimonialItem } from "@/types/database.types";
-import { createClient } from "@/lib/supabase/server";
-import { SiteEditorSidebar } from "@/components/features/live-edit/site-editor-sidebar";
 
-export default async function HomePage({ searchParams }: { searchParams?: Record<string, string | string[]> }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+export default async function HomePage() {
 
   const homeData = await getSiteContent('home_page') || {};
   const tData = await getSiteContent('testimonials_page') || {};
@@ -25,20 +21,7 @@ export default async function HomePage({ searchParams }: { searchParams?: Record
      publicTestimonials = (tData.testimonialsList as TestimonialItem[]).filter((item) => item.visible);
   }
 
-  const isEditing = Boolean(user) && (searchParams?.edit === 'true' || (Array.isArray(searchParams?.edit) && searchParams?.edit?.includes('true')));
-
-  let aboutData: Record<string, any> | null = null;
-  let servicesData: Record<string, any> | null = null;
-  let testimonialsData: Record<string, any> | null = null;
-
-  if (isEditing) {
-    aboutData = await getSiteContent('about_page');
-    servicesData = await getSiteContent('services_page');
-    testimonialsData = await getSiteContent('testimonials_page');
-  }
-
   return (
-    <>
     <div className="flex flex-col flex-1">
       {/* Hero Section */}
       <section className="relative w-full py-20 lg:py-32 overflow-hidden bg-slate-50">
@@ -154,14 +137,5 @@ export default async function HomePage({ searchParams }: { searchParams?: Record
          </section>
       )}
     </div>
-    {isEditing && (
-      <SiteEditorSidebar
-        initialHome={homeData}
-        initialAbout={aboutData}
-        initialServices={servicesData}
-        initialTestimonials={testimonialsData}
-      />
-    )}
-    </>
   );
 }

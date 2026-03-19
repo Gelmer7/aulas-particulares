@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useRef } from 'react';
+import { useCallback, useEffect, useState, useTransition, useRef } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Button } from 'primereact/button';
@@ -9,18 +9,18 @@ import { Toast } from 'primereact/toast';
 import { ImageUploader } from '@/components/ui/image-uploader';
 import { saveSiteContent } from '@/actions/cms.actions';
 
-export function HomeCmsForm({ initialData }: { initialData: any }) {
+export function HomeCmsForm({ initialData, onRegisterSave, hideFooterSave }: { initialData: Record<string, unknown> | null, onRegisterSave?: (fn: () => void) => void, hideFooterSave?: boolean }) {
   const toast = useRef<Toast>(null);
   const [isPending, startTransition] = useTransition();
 
-  const [formData, setFormData] = useState({
-     heroTitle: initialData?.heroTitle || "",
-     heroSubtitle: initialData?.heroSubtitle || "",
-     heroImage: initialData?.heroImage || null,
-     ctaText: initialData?.ctaText || "Agendar Primeira Aula",
+  const [formData, setFormData] = useState<{ heroTitle: string; heroSubtitle: string; heroImage: string | null; ctaText: string }>({
+     heroTitle: (initialData?.heroTitle as string) || "",
+     heroSubtitle: (initialData?.heroSubtitle as string) || "",
+     heroImage: (initialData?.heroImage as string) || null,
+     ctaText: (initialData?.ctaText as string) || "Agendar Primeira Aula",
   });
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
       startTransition(async () => {
          const res = await saveSiteContent('home_page', formData, 'hero');
          if (res.success) {
@@ -32,7 +32,11 @@ export function HomeCmsForm({ initialData }: { initialData: any }) {
             toast.current?.show({ severity: 'error', summary: 'Erro', detail: res.message });
          }
       });
-  };
+  }, [formData]);
+
+  useEffect(() => {
+    onRegisterSave?.(handleSave);
+  }, [onRegisterSave, handleSave]);
 
   const handleImageUpload = (url: string) => {
       setFormData(prev => ({ ...prev, heroImage: url }));
@@ -48,7 +52,7 @@ export function HomeCmsForm({ initialData }: { initialData: any }) {
                  <div className="flex flex-col gap-2">
                     <label className="font-semibold text-slate-700 text-sm">Título da Seção Hero</label>
                     <InputText 
-                        value={formData.heroTitle} 
+                        value={formData.heroTitle}
                         onChange={(e) => setFormData({...formData, heroTitle: e.target.value})} 
                         placeholder="Ex: Aprenda de forma definitiva..." 
                         className="w-full" 
@@ -59,7 +63,7 @@ export function HomeCmsForm({ initialData }: { initialData: any }) {
                     <label className="font-semibold text-slate-700 text-sm">Subtítulo (Resumo)</label>
                     <InputTextarea 
                         rows={4} 
-                        value={formData.heroSubtitle} 
+                        value={formData.heroSubtitle}
                         onChange={(e) => setFormData({...formData, heroSubtitle: e.target.value})} 
                         placeholder="Mentoria personalizada focada em suas fraquezas..." 
                         className="w-full resize-none" 
@@ -69,7 +73,7 @@ export function HomeCmsForm({ initialData }: { initialData: any }) {
                  <div className="flex flex-col gap-2">
                     <label className="font-semibold text-slate-700 text-sm">Texto do Botão Principal (CTA)</label>
                     <InputText 
-                        value={formData.ctaText} 
+                        value={formData.ctaText}
                         onChange={(e) => setFormData({...formData, ctaText: e.target.value})} 
                         className="w-full" 
                     />
@@ -79,7 +83,7 @@ export function HomeCmsForm({ initialData }: { initialData: any }) {
              <div className="flex flex-col gap-2">
                  <label className="font-semibold text-slate-700 text-sm">Imagem Principal (Banner)</label>
                  <ImageUploader 
-                    currentImageUrl={formData.heroImage} 
+                    currentImageUrl={formData.heroImage ?? undefined}
                     folderId="hero" 
                     onUploadSuccess={handleImageUpload} 
                  />
@@ -88,13 +92,15 @@ export function HomeCmsForm({ initialData }: { initialData: any }) {
           </div>
 
           <div className="pt-6 border-t border-slate-100 flex justify-end">
-              <Button 
-                 label={isPending ? "Salvando..." : "Salvar e Publicar (Home)"} 
-                 icon="pi pi-check" 
-                 loading={isPending}
-                 onClick={handleSave} 
-                 className="bg-indigo-600 hover:bg-indigo-700 border-none px-6 py-3 font-bold" 
-              />
+              {!hideFooterSave && (
+                <Button 
+                   label={isPending ? "Salvando..." : "Salvar e Publicar (Home)"} 
+                   icon="pi pi-check" 
+                   loading={isPending}
+                   onClick={handleSave} 
+                   className="bg-indigo-600 hover:bg-indigo-700 border-none px-6 py-3 font-bold" 
+                />
+              )}
           </div>
       </div>
   );

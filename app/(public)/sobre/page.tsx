@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default async function SobrePage() {
   const aboutData = await getSiteContent('about_page') || {};
   
-  const title = aboutData.aboutTitle || "Sobre Mim";
+  const title = aboutData.aboutTitle;
   const bio = aboutData.aboutBio || `
     <p>Olá! Sou apaixonada por exatas e acredito que aprender Química e Física não precisa ser uma tortura. Com mais de 10 anos de experiência lecionando aulas particulares, vivenciei as maiores dificuldades dos alunos com essas disciplinas e desenvolvi uma abordagem que simplifica conceitos complexos.</p>
     <br/>
